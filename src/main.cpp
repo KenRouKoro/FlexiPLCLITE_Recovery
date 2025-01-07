@@ -39,7 +39,7 @@ static uint8_t out_buffer[MAX_PACKET_SIZE];
 
 void tick();
 
-void screentick();
+void screenTick();
 
 void initFlashStorage();
 
@@ -53,6 +53,7 @@ void init_main();
 
 Menu *testMenu;
 bool renderStatus = true;
+
 
 
 void setup() {
@@ -81,7 +82,7 @@ void setup() {
     // 设置通道 2，触发 16.6ms ，60hz
     aimtimer.setPrescaleFactor(6400);
     aimtimer.setOverflow(167);
-    aimtimer.attachInterrupt(screentick);
+    aimtimer.attachInterrupt(screenTick);
 
     NVIC_SetPriority(TIM3_IRQn, 0);
     NVIC_SetPriority(TIM6_IRQn, 5);
@@ -106,7 +107,7 @@ void tick() {
     OUTTransfer.tick();
 }
 
-void screentick() {
+void screenTick() {
     animationTick();
 }
 
@@ -131,8 +132,8 @@ void renderStr(const char *string1, const char *string2) {
 }
 
 void writeSaveData() {
-    auto *data = (uint8_t *) &nowData;
-    uint32_t size = sizeof(nowData);
+    const auto *data = reinterpret_cast<uint8_t *>(&nowData);
+    constexpr uint32_t size = sizeof(nowData);
     for (int i = 0; i < size; i++) {
         EEPROM.write(i, data[i]);
     }
@@ -274,7 +275,7 @@ void init_menu() {
 
     const char *about_str[] = {"昊明喷涂设备"};
     Menu **about_menu = bindChildrenToMenu(menus[2], about_str, 1);
-    about_menu[0]->formate_callback = []()-> auto { return "版本:1.0.0-232"; };
+    about_menu[0]->formate_callback = []()-> auto { return "版本:1.0.1-232"; };
 
     setMenu(*menus);
 }

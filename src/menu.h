@@ -7,6 +7,7 @@
 
 //动画长度，默认30帧一次
 #define TIME_LENGTH 30
+#define AUTO_STOP (10 * 60)
 
 enum BTN_Type {
     UP,
@@ -45,6 +46,7 @@ static bool renderRIGHT = false;
 static bool inAnimation = false;
 static BTN_Type animationType = UP;
 static int NowAnimationTick = 0;
+static int outTime = 0;
 
 void setMenu(Menu *m) {
     nowMenu = m;
@@ -74,6 +76,9 @@ void startAnimation(BTN_Type animation_type) {
 }
 //动画逻辑tick，建议间隔16.7ms执行一次
 void animationTick() {
+    if (outTime<=AUTO_STOP) {
+        outTime++;
+    }
     if (!inAnimation)return;
     //base_y min = 0,max = 32
     if (animationType == UP) {
@@ -87,6 +92,7 @@ void animationTick() {
     if (animationType == CANCEL) {
         base_x = (128 * easeInOut(NowAnimationTick)) / TIME_LENGTH;
     }
+
 
 
     if (NowAnimationTick >= TIME_LENGTH) {
@@ -112,6 +118,10 @@ void animationTick() {
 }
 //在loop中调用，优先级最低不影响其他逻辑
 void renderTick() {
+    if (outTime>=AUTO_STOP) {
+        u8g2.clearDisplay();
+        return;
+    }
     if (nowMenu == nullptr) return;
     u8g2.clearBuffer();
     u8g2.setFont(u8g2_font_fh);
@@ -127,8 +137,8 @@ void renderTick() {
     }
 
     /**
- * 渲染左右额外菜单
- **/
+    * 渲染左右额外菜单
+    **/
     if (renderLEFT) {
         if (nowMenu->father_menu != nullptr) {
             Menu *render_menu = nowMenu->father_menu;
@@ -175,30 +185,32 @@ void renderTick() {
             u8g2.print((render_menu->formate_callback()));
         }
     }
-
-
     u8g2.sendBuffer();
 }
 
 void onClickOK() {
+    outTime=0;
     if (nowMenu != nullptr && nowMenu->btn_callback != nullptr)nowMenu->btn_callback(OK);
     if (nowMenu->children_menu == nullptr) return;
     startAnimation(OK);
 }
 
 void onClickCANCEL() {
+    outTime=0;
     if (nowMenu != nullptr && nowMenu->btn_callback != nullptr)nowMenu->btn_callback(CANCEL);
     if (nowMenu->father_menu == nullptr) return;
     startAnimation(CANCEL);
 }
 
 void onClickUP() {
+    outTime=0;
     if (nowMenu != nullptr && nowMenu->btn_callback != nullptr)nowMenu->btn_callback(UP);
     if (nowMenu->last_menu == nullptr) return;
     startAnimation(UP);
 }
 
 void onClickDOWN() {
+    outTime=0;
     if (nowMenu != nullptr && nowMenu->btn_callback != nullptr)nowMenu->btn_callback(DOWN);
     if (nowMenu->next_menu == nullptr) return;
     startAnimation(DOWN);
