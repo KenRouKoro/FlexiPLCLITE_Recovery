@@ -21,8 +21,8 @@
 #define OUT10 PA15
 #define OUT11 PD0
 
-#define sw1 PB15
-#define sw2 PA8
+#define sw1 PA8
+#define sw2 PB15
 
 #define IN0 PB3
 #define IN1 PD3
@@ -68,9 +68,9 @@ void initSW();
 
 void closeAll();
 
-void outputRelay(short num,bool status);
-bool readRelay(short num);
-bool readINPUT(short num);
+void outputRelay(uint8_t num,bool status);
+bool readRelay(uint8_t num);
+bool readINPUT(uint8_t num);
 
 void onClickOK();
 void onClickCANCEL();
@@ -85,7 +85,7 @@ void onIn3();
 void onSW1();
 void onSW2();
 
-void onInput(short pinNum);
+void onInput(uint8_t pinNum);
 
 /**
  * ********************方法实现********************
@@ -142,8 +142,8 @@ void inline initIN() {
 void inline initSW() {
  pinMode(sw1, INPUT_PULLDOWN);
  pinMode(sw2, INPUT_PULLDOWN);
- attachInterrupt(digitalPinToInterrupt(sw1), onSW1, LOW);
- attachInterrupt(digitalPinToInterrupt(sw2), onSW2, LOW);
+ attachInterrupt(digitalPinToInterrupt(sw1), onSW1, CHANGE);
+ attachInterrupt(digitalPinToInterrupt(sw2), onSW2, CHANGE);
 }
 
 void inline closeAll() {

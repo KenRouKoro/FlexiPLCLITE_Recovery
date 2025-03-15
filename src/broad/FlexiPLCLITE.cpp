@@ -24,7 +24,7 @@ WEAK void onSW1() {
 WEAK void onSW2() {
 }
 
-WEAK void onInput(short pinNum) {
+WEAK void onInput(uint8_t pinNum) {
 }
 
 WEAK void onIn0() {
@@ -42,7 +42,7 @@ WEAK void onIn2() {
 WEAK void onIn3() {
     onInput(3);
 }
-bool readINPUT(short num) {
+bool readINPUT(uint8_t num) {
     switch (num) {
         case 1:
             return (digitalRead(IN0)==HIGH);
@@ -56,7 +56,7 @@ bool readINPUT(short num) {
             return false;
     }
 }
-bool readRelay(short num) {
+bool readRelay(uint8_t num) {
     switch (num) {
         case 1:
             return (digitalRead(OUT0)==HIGH);
@@ -86,7 +86,7 @@ bool readRelay(short num) {
             return false;
     }
 }
-void outputRelay(short num, bool status) {
+void outputRelay(uint8_t num, bool status) {
     if (status) {
         switch (num) {
             case 1:
