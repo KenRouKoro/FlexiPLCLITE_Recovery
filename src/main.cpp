@@ -4,7 +4,6 @@
 #include "stm32g0xx.h"
 #include "tick_scheduler.h"
 #include "menu/menu.h"
-//#include "User_Flash.h"
 #include <EEPROM.h>
 
 
